@@ -24,11 +24,11 @@ pub type SQLLEN = INT64;
 pub type SQLULEN = UINT64;
 #[cfg(target_arch = "x86_64")]
 pub type SQLSETPOSIROW = UINT64;
-#[cfg(target_arch = "x86")]
+#[cfg(any(target_arch = "x86", target_arch = "arm"))]
 pub type SQLLEN = SQLINTEGER;
-#[cfg(target_arch = "x86")]
+#[cfg(any(target_arch = "x86", target_arch = "arm"))]
 pub type SQLULEN = SQLUINTEGER;
-#[cfg(target_arch = "x86")]
+#[cfg(any(target_arch = "x86", target_arch = "arm"))]
 pub type SQLSETPOSIROW = SQLUSMALLINT;
 pub type SQLROWCOUNT = SQLULEN;
 pub type SQLROWSETSIZE = SQLULEN;
@@ -55,7 +55,7 @@ pub type SDWORD = c_long;
 pub type SWORD = c_short;
 pub type UDWORD = c_ulong;
 //pub type UWORD = c_ushort;
-//#[cfg(target_arch = "x86")]
+//#[cfg(any(target_arch = "x86", target_arch = "arm"))]
 //pub type SQLUINTEGER = UDWORD;
 pub type SLONG = c_long;
 pub type SSHORT = c_short;

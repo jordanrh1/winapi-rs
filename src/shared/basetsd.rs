@@ -39,19 +39,19 @@ pub type ULONG_PTR = usize;
 pub type PULONG_PTR = *mut usize;
 pub type SHANDLE_PTR = isize;
 pub type HANDLE_PTR = usize;
-#[cfg(target_arch = "x86")]
+#[cfg(any(target_arch = "x86", target_arch = "arm"))]
 pub type UHALF_PTR = c_ushort;
 #[cfg(target_arch = "x86_64")]
 pub type UHALF_PTR = c_uint;
-#[cfg(target_arch = "x86")]
+#[cfg(any(target_arch = "x86", target_arch = "arm"))]
 pub type PUHALF_PTR = *mut c_ushort;
 #[cfg(target_arch = "x86_64")]
 pub type PUHALF_PTR = *mut c_uint;
-#[cfg(target_arch = "x86")]
+#[cfg(any(target_arch = "x86", target_arch = "arm"))]
 pub type HALF_PTR = c_short;
 #[cfg(target_arch = "x86_64")]
 pub type HALF_PTR = c_int;
-#[cfg(target_arch = "x86")]
+#[cfg(any(target_arch = "x86", target_arch = "arm"))]
 pub type PHALF_PTR = *mut c_short;
 #[cfg(target_arch = "x86_64")]
 pub type PHALF_PTR = *mut c_int;

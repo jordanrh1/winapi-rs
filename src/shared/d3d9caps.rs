@@ -59,7 +59,7 @@ pub const D3DOVERLAYCAPS_YCbCr_BT709_xvYCC: DWORD = 0x00000020;
 pub const D3DOVERLAYCAPS_STRETCHX: DWORD = 0x00000040;
 pub const D3DOVERLAYCAPS_STRETCHY: DWORD = 0x00000080;
 // FIXME packed(4)
-STRUCT!{#[cfg_attr(target_arch = "x86", repr(packed))] struct D3DCONTENTPROTECTIONCAPS {
+STRUCT!{#[cfg_attr(any(target_arch = "x86", target_arch = "arm"), repr(packed))] struct D3DCONTENTPROTECTIONCAPS {
     Caps: DWORD,
     KeyExchangeType: GUID,
     BufferAlignmentStart: UINT,

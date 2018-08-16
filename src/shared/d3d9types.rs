@@ -1106,7 +1106,7 @@ STRUCT!{struct D3DTRIPATCH_INFO {
 }}
 pub const MAX_DEVICE_IDENTIFIER_STRING: usize = 512;
 // FIXME packed(4)
-STRUCT!{#[cfg_attr(target_arch = "x86", repr(packed))] struct D3DADAPTER_IDENTIFIER9 {
+STRUCT!{#[cfg_attr(any(target_arch = "x86", target_arch = "arm"), repr(packed))] struct D3DADAPTER_IDENTIFIER9 {
     Driver: [c_char; MAX_DEVICE_IDENTIFIER_STRING],
     Description: [c_char; MAX_DEVICE_IDENTIFIER_STRING],
     DeviceName: [c_char; 32],
@@ -1205,7 +1205,7 @@ STRUCT!{struct D3DDEVINFO_D3D9CACHEUTILIZATION {
     PostTransformVertexCacheHitRate: FLOAT,
 }}
 // FIXME packed(4)
-STRUCT!{#[cfg_attr(target_arch = "x86", repr(packed))] struct D3DMEMORYPRESSURE {
+STRUCT!{#[cfg_attr(any(target_arch = "x86", target_arch = "arm"), repr(packed))] struct D3DMEMORYPRESSURE {
     BytesEvictedFromProcess: UINT64,
     SizeOfInefficientAllocation: UINT64,
     LevelOfEfficiency: DWORD,
@@ -1234,7 +1234,7 @@ pub const D3DCONVOLUTIONMONO_MAXHEIGHT: DWORD = D3DCONVOLUTIONMONO_MAXWIDTH;
 pub const D3DFMT_A1_SURFACE_MAXWIDTH: DWORD = 8192;
 pub const D3DFMT_A1_SURFACE_MAXHEIGHT: DWORD = 2048;
 // FIXME packed(4)
-STRUCT!{#[cfg_attr(target_arch = "x86", repr(packed))] struct D3DPRESENTSTATS {
+STRUCT!{#[cfg_attr(any(target_arch = "x86", target_arch = "arm"), repr(packed))] struct D3DPRESENTSTATS {
     PresentCount: UINT,
     PresentRefreshCount: UINT,
     SyncRefreshCount: UINT,
