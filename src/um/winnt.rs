@@ -1206,7 +1206,151 @@ STRUCT!{struct KNONVOLATILE_CONTEXT_POINTERS {
 }}
 pub type PKNONVOLATILE_CONTEXT_POINTERS = *mut KNONVOLATILE_CONTEXT_POINTERS;
 } // IFDEF(x86_64)
-#[cfg(any(target_arch = "x86", target_arch = "arm"))]
+STRUCT!{struct SCOPE_TABLE_ARM {
+    Count: DWORD,
+    ScopeRecord: [SCOPE_TABLE_ARM_ScopeRecord; 1],
+}}
+STRUCT!{struct SCOPE_TABLE_ARM_ScopeRecord {
+    BeginAddress: DWORD,
+    EndAddress: DWORD,
+    HandlerAddress: DWORD,
+    JumpTarget: DWORD,
+}}
+#[cfg(target_arch = "arm")]
+IFDEF!{
+pub const EXCEPTION_READ_FAULT: DWORD = 0;
+pub const EXCEPTION_WRITE_FAULT: DWORD = 1;
+pub const EXCEPTION_EXECUTE_FAULT: DWORD = 8;
+pub const CONTEXT_ARM: DWORD = 0x00200000;
+pub const CONTEXT_CONTROL: DWORD = CONTEXT_ARM | 0x00000001;
+pub const CONTEXT_INTEGER: DWORD = CONTEXT_ARM | 0x00000002;
+pub const CONTEXT_FLOATING_POINT: DWORD = CONTEXT_ARM | 0x00000004;
+pub const CONTEXT_DEBUG_REGISTERS: DWORD = CONTEXT_ARM | 0x00000008;
+pub const CONTEXT_FULL: DWORD = CONTEXT_CONTROL | CONTEXT_INTEGER | CONTEXT_FLOATING_POINT;
+pub const CONTEXT_ALL: DWORD = CONTEXT_CONTROL | CONTEXT_INTEGER | 
+			CONTEXT_FLOATING_POINT | CONTEXT_DEBUG_REGISTERS;
+
+pub const CONTEXT_EXCEPTION_ACTIVE: DWORD = 0x08000000;
+pub const CONTEXT_SERVICE_ACTIVE: DWORD = 0x10000000;
+pub const CONTEXT_EXCEPTION_REQUEST: DWORD = 0x40000000;
+pub const CONTEXT_EXCEPTION_REPORTING: DWORD = 0x80000000;
+pub const CONTEXT_UNWOUND_TO_CALL: DWORD = 0x20000000;
+pub const INITIAL_CPSR: DWORD = 0x10;
+pub const INITIAL_FPSCR: DWORD = 0x0;
+pub const ARM_MAX_BREAKPOINTS: usize = 8;
+pub const ARM_MAX_WATCHPOINTS: usize = 1;
+STRUCT!{struct NEON128 {
+    Low: ULONGLONG,
+	High: LONGLONG,
+}}
+STRUCT!{struct CONTEXT {
+    ContextFlags: DWORD,
+    R0: DWORD,
+    R1: DWORD,
+    R2: DWORD,
+    R3: DWORD,
+    R4: DWORD,
+    R5: DWORD,
+    R6: DWORD,
+    R7: DWORD,
+    R8: DWORD,
+    R9: DWORD,
+    R10: DWORD,
+    R11: DWORD,
+    R12: DWORD,
+    Sp: DWORD,
+    Lr: DWORD,
+    Pc: DWORD,
+    Cpsr: DWORD,
+    Fpscr: DWORD,
+    Padding: DWORD,
+	Q: [NEON128; 16],
+    Bvr: [DWORD; ARM_MAX_BREAKPOINTS],
+    Bcr: [DWORD; ARM_MAX_BREAKPOINTS],
+    Wvr: [DWORD; ARM_MAX_WATCHPOINTS],
+    Wcr: [DWORD; ARM_MAX_WATCHPOINTS],
+    Padding2: [DWORD; 2],
+}}
+pub type PCONTEXT = *mut CONTEXT;
+pub type RUNTIME_FUNCTION = IMAGE_RUNTIME_FUNCTION_ENTRY;
+pub type PRUNTIME_FUNCTION = *mut IMAGE_RUNTIME_FUNCTION_ENTRY;
+pub type SCOPE_TABLE = SCOPE_TABLE_ARM;
+pub type PSCOPE_TABLE = *mut SCOPE_TABLE_ARM;
+pub const UNWIND_HISTORY_TABLE_SIZE: usize = 12;
+STRUCT!{struct UNWIND_HISTORY_TABLE_ENTRY {
+    ImageBase: DWORD,
+    FunctionEntry: PRUNTIME_FUNCTION,
+}}
+pub type PUNWIND_HISTORY_TABLE_ENTRY = *mut UNWIND_HISTORY_TABLE_ENTRY;
+STRUCT!{struct UNWIND_HISTORY_TABLE {
+    Count: DWORD,
+    LocalHint: BYTE,
+    GlobalHint: BYTE,
+    Search: BYTE,
+    Once: BYTE,
+    LowAddress: DWORD,
+    HighAddress: DWORD,
+    Entry: [UNWIND_HISTORY_TABLE_ENTRY; UNWIND_HISTORY_TABLE_SIZE],
+}}
+pub type PUNWIND_HISTORY_TABLE = *mut UNWIND_HISTORY_TABLE;
+STRUCT!{struct DISPATCHER_CONTEXT {
+    ControlPc: DWORD,
+    ImageBase: DWORD,
+    FunctionEntry: PRUNTIME_FUNCTION,
+    EstablisherFrame: DWORD,
+    TargetPc: DWORD,
+    ContextRecord: PCONTEXT,
+    LanguageHandler: PEXCEPTION_ROUTINE,
+    HandlerData: PVOID,
+    HistoryTable: PUNWIND_HISTORY_TABLE,
+    ScopeIndex: DWORD,
+    ControlPcIsUnwound: BOOLEAN,
+    NonVolatileRegisters: *mut BYTE,
+    VirtualVfpHead: DWORD,
+}}
+FN!{cdecl PEXCEPTION_FILTER(
+	EstablisherFrame: DWORD,
+    ExceptionPointers: *mut EXCEPTION_POINTERS,
+) -> LONG}
+FN!{cdecl PTERMINATION_HANDLER(
+    EstablisherFrame: DWORD,
+	AbnormalTermination: BOOLEAN,
+) -> ()}
+FN!{cdecl PGET_RUNTIME_FUNCTION_CALLBACK(
+    ControlPc: DWORD,
+    Context: PVOID,
+) -> PRUNTIME_FUNCTION}
+FN!{cdecl POUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK(
+    Process: HANDLE,
+    TableAddress: PVOID,
+    Entries: PDWORD,
+    Functions: *mut PRUNTIME_FUNCTION,
+) -> DWORD}
+pub const OUT_OF_PROCESS_FUNCTION_TABLE_CALLBACK_EXPORT_NAME: &'static str
+    = "OutOfProcessFunctionTableCallback";
+	
+STRUCT!{struct KNONVOLATILE_CONTEXT_POINTERS {
+    R4: PDWORD,
+    R5: PDWORD,
+    R6: PDWORD,
+    R7: PDWORD,
+    R8: PDWORD,
+    R9: PDWORD,
+    R10: PDWORD,
+    R11: PDWORD,
+    Lr: PDWORD,
+
+    D8: PULONGLONG,
+    D9: PULONGLONG,
+    D10: PULONGLONG,
+    D11: PULONGLONG,
+    D12: PULONGLONG,
+    D13: PULONGLONG,
+    D14: PULONGLONG,
+    D15: PULONGLONG,
+}}
+} // IFDEF(arm)
+#[cfg(target_arch = "x86")]
 IFDEF!{
 pub const EXCEPTION_READ_FAULT: DWORD = 0;
 pub const EXCEPTION_WRITE_FAULT: DWORD = 1;
